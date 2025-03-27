@@ -1,10 +1,13 @@
 package com.example.Curso.Controller;
 
 
+import com.example.Curso.DTO.ProfessorDTO;
 import com.example.Curso.Entity.Curso;
 import com.example.Curso.Entity.Professor;
 import com.example.Curso.Repository.CursoRepository;
 import com.example.Curso.Repository.ProfessorRepository;
+import com.example.Curso.Service.ProfessorService;
+import jakarta.validation.Valid;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +24,9 @@ public class ProfessorController {
 
     @Autowired
     private ProfessorRepository professorRepository;
+
+    @Autowired
+    private ProfessorService professorService;
 
     @GetMapping
     public ResponseEntity<List<Professor>> getAll(){
@@ -39,8 +45,14 @@ public class ProfessorController {
     }
 
     @PostMapping
-    public ResponseEntity<Professor> created(@RequestBody Professor professor){
-        Professor professorBd = professorRepository.save(professor);
+    public ResponseEntity<Professor> created(@RequestBody ProfessorDTO professorDto){
+//        Professor professor = new Professor();
+//        professor.setNome(professorDto.getNome());
+//        professor.setCpf(professorDto.getCpf());
+//        Professor professorBd = professorRepository.save(professor);
+
+        Professor professorBd = professorService.save(professorDto);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(professorBd);
     }
 

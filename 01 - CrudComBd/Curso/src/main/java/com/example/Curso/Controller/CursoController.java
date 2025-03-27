@@ -1,7 +1,10 @@
 package com.example.Curso.Controller;
 
+import com.example.Curso.DTO.CursoDTO;
 import com.example.Curso.Entity.Curso;
 import com.example.Curso.Repository.CursoRepository;
+import com.example.Curso.Repository.ProfessorRepository;
+import com.example.Curso.Service.CursoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +19,11 @@ public class CursoController {
 
     @Autowired
     private CursoRepository cursoRepository;
+    @Autowired
+    private ProfessorRepository professorRepository;
+
+    @Autowired
+    private CursoService cursoService;
 
     @GetMapping
     public ResponseEntity<List<Curso>> getAll(){
@@ -34,8 +42,15 @@ public class CursoController {
     }
 
     @PostMapping
-    public ResponseEntity<Curso> created(@RequestBody Curso curso){
+    public ResponseEntity<Curso> created(@RequestBody CursoDTO cursoDto){
+        Curso curso = new Curso();
+        curso.setNome(cursoDto.getNome());
+        curso.setNumeroSala(cursoDto.getNumeroSala());
+        curso.setProfessor(professorRepository.findById(cursoDto.getIdProfessor()).get());
         Curso cursoBd = cursoRepository.save(curso);
+
+//        Curso curso = cursoService.fromDTO(cursoDto);
+//        Curso cursoBd = cursoRepository.save(curso);
         return ResponseEntity.status(HttpStatus.CREATED).body(cursoBd);
     }
 

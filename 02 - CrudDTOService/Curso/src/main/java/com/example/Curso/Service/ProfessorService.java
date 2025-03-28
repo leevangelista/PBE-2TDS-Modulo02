@@ -83,6 +83,9 @@ public class ProfessorService {
     }
 
     public boolean delete(Long id){
+        // funcao verifica se existe se esse id existe no banco de dados
+        // se ele existir acontece o delete
+        // assim não precisa trazer o objeto inteiro para ser deletado, melhorando o desempenho
         if(professorRepository.existsById(id)){
             professorRepository.deleteById(id);
             return true;

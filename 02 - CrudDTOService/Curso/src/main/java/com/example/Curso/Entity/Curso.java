@@ -22,7 +22,6 @@ public class Curso {
     private Professor professor;
 
     @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL)
-    @JsonManagedReference
     private List<Aluno> alunos;
 
     public Curso() {

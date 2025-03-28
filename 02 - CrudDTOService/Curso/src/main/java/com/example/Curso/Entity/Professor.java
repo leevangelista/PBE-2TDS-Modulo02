@@ -12,6 +12,7 @@ public class Professor {
     private String nome;
     private String cpf;
 
+    // cascade = cascadeType.ALL faz com que quando um professor for deletado o curso também seja deletado
     @OneToOne(mappedBy = "professor", cascade = CascadeType.ALL)
     private Curso curso;
 

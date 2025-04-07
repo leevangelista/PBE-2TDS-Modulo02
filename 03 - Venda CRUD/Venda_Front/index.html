@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cadastro de Produto</title>
+</head>
+<body>
+    <h2>Cadastro de Produto</h2>
+    <form id="produtoForm">
+        <label>Nome:</label>
+        <input type="text" name="nome" id="nome" required><br><br>
+        
+        <label>Valor:</label>
+        <input type="number" step="0.01" name="valor" id="valor" required><br><br>
+        
+        <label>Saldo:</label>
+        <input type="number" name="saldo" id="saldo" required><br><br>
+        
+        <label>Saldo Mínimo:</label>
+        <input type="number" name="saldo_minimo" id="saldo_minimo" required><br><br>
+        
+        <button type="submit">Enviar</button>
+    </form>
+
+    <hr>
+
+    <h2>Lista de Produtos</h2>
+    <button id="carregarProdutos">Carregar Produtos</button>
+    <ul id="listaProdutos"></ul>
+
+    <script>
+        function enviarProduto(event) {
+            event.preventDefault(); // Evita o envio tradicional do formulário
+            
+            // cria objeto para ser enviado
+            let formData = {
+                nome: document.getElementById("nome").value,
+                valor: parseFloat(document.getElementById("valor").value),
+                saldo: parseInt(document.getElementById("saldo").value),
+                saldoMinimo: parseInt(document.getElementById("saldo_minimo").value)
+            };
+            
+            fetch("http://localhost:8080/produto", { // url da requisição / mesma url colocada no Postman
+                method: "POST", // método da requisição
+                headers: { "Content-Type": "application/json" }, // informa que um json esta sendo enviado
+                // converte objeto em json
+                body: JSON.stringify(formData) // conteúdo que esta sendo enviado, JSON neste caso
+            })
+            .then(response => {
+                if (!response.ok) { // erro retornado pelo back-end
+                    throw new Error("Erro na requisição: " + response.status);
+                }
+                return response.json(); // converte o JSON que esta no body para Objeto JS
+            })
+            .then(data => {
+                alert("Sucesso: " + JSON.stringify(data)); // caso de certo já aciona a função para atualizar a lista
+                carregarProdutos();
+            })
+            .catch(error => alert("Erro: " + error.message)); // erro ao fazer requisição
+        }
+
+        // função que busca as informações no banco de dados e cria uma lista com a informações
+        function carregarProdutos() {
+            fetch("http://localhost:8080/produto", {
+                method: "GET",
+                headers: { "Content-Type": "application/json" }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Erro ao buscar produtos: " + response.status);
+                }
+                return response.json();
+            })
+            .then(produtos => { // criação da lista de produtos
+                let lista = document.getElementById("listaProdutos");
+                lista.innerHTML = ""; // Limpa a lista antes de adicionar
+                produtos.forEach(produto => {
+                    let item = document.createElement("li");
+                    item.textContent = `${produto.nome} - R$ ${produto.valor} - Saldo: ${produto.saldo} - Saldo Mínimo: ${produto.saldoMinimo}`;
+                    let btnDeletar = document.createElement("button")
+                    btnDeletar.textContent = "Deletar";
+                    btnDeletar.style.marginLeft = "10px";
+                    btnDeletar.onclick = function(){
+                        deletarProduto(produto.id)
+                    }
+                    item.appendChild(btnDeletar);
+                    lista.appendChild(item);
+                });
+            })
+            .catch(error => alert("Erro: " + error.message));
+        }
+
+        // função para deletar o produto
+        function deletarProduto(id) {
+            if (confirm("Tem certeza que deseja deletar este produto?")) {
+                fetch(`http://localhost:8080/produto/${id}`, {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Erro ao deletar o produto: " + response.status);
+                    }
+                    alert("Produto deletado com sucesso!");
+                    carregarProdutos();
+                })
+                .catch(error => alert("Erro: " + error.message));
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("produtoForm").addEventListener("submit", enviarProduto);
+            document.getElementById("carregarProdutos").addEventListener("click", carregarProdutos);
+        });
+    </script>
+</body>
+</html>

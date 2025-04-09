@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cadastro de Produto</title>
+</head>
+<body>
+    <h2> Atualizar Cliente </h2>
+
+    <form id="produtoFormPerfil">
+        <input type="hidden" id="produtoId">
+        <label>Nome: <input type="text" id="nome"></label><br>
+        <label>Valor: <input type="number" id="valor"></label><br>
+        <label>Saldo: <input type="number" id="saldo"></label><br>
+        <label>Saldo Mínimo: <input type="number" id="saldoMinimo"></label><br>
+        <button type="submit">Salvar</button>
+    </form>
+
+
+    <script>
+        function paramUrl(){
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get("id");
+
+            if (id) {
+                carregarProdutoPorId(id);
+            }
+        }
+
+        function carregarProdutoPorId(id) {
+            // requisição do tipo get
+            // preenche os campos do formulário com base no produto encontrado
+            fetch(`http://localhost:8080/produto/${id}`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json" }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Erro ao buscar o produto: " + response.status);
+                }
+                return response.json();
+            })
+            .then(produto => {
+                document.getElementById("produtoId").value = produto.id;
+                document.getElementById("nome").value = produto.nome;
+                document.getElementById("valor").value = produto.valor;
+                document.getElementById("saldo").value = produto.saldo;
+                document.getElementById("saldoMinimo").value = produto.saldoMinimo;
+            })
+            .catch(error => alert("Erro: " + error.message));
+        }
+
+        function enviarProduto(event) {
+            event.preventDefault(); // Evita o envio tradicional do formulário
+            let id = document.getElementById("produtoId").value;
+            
+            // cria objeto para ser enviado
+            let formData = {
+                nome: document.getElementById("nome").value,
+                valor: parseFloat(document.getElementById("valor").value),
+                saldo: parseInt(document.getElementById("saldo").value),
+                saldoMinimo: parseInt(document.getElementById("saldoMinimo").value)
+            };
+            
+            fetch(`http://localhost:8080/produto/${id}`, { // url da requisição / mesma url colocada no Postman
+                method: "PUT", // método da requisição
+                headers: { "Content-Type": "application/json" }, // informa que um json esta sendo enviado
+                // converte objeto em json
+                body: JSON.stringify(formData) // conteúdo que esta sendo enviado, JSON neste caso
+            })
+            .then(response => {
+                if (!response.ok) { // erro retornado pelo back-end
+                    throw new Error("Erro na requisição: " + response.status);
+                }
+                return response.json(); // converte o JSON que esta no body para Objeto JS
+            })
+            .then(data => {
+                alert("Sucesso: " + JSON.stringify(data));
+            })
+            .catch(error => alert("Erro: " + error.message)); // erro ao fazer requisição
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("produtoFormPerfil").addEventListener("submit", enviarProduto);
+            paramUrl();
+        });
+    </script>
+</body>
+</html>

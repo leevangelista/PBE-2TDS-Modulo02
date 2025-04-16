@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LivroDTO {
+public class LivroDTO implements Serializable{
     private Long id;
     private String nome;
     private String autor;

@@ -19,8 +19,8 @@ public class Livro implements Serializable {
     private Long id;
     private String nome;
     private String autor;
-    private int ISBN;
     @Column(unique = true)
+    private int ISBN;
     private String genero;
 
     @ManyToMany(mappedBy = "livros")

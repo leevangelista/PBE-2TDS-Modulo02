@@ -30,7 +30,7 @@ public class ClienteDTO implements Serializable {
                 cliente.getId(),
                 cliente.getNome(),
                 cliente.getSobrenome(),
-                cliente.getSobrenome()
+                cliente.getCpf()
         );
     }
 }

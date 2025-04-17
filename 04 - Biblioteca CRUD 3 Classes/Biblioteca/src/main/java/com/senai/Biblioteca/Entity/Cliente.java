@@ -1,6 +1,7 @@
 package com.senai.Biblioteca.Entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,7 +26,7 @@ public class Cliente implements Serializable {
     private String cpf;
 
     @OneToMany(mappedBy = "cliente")
-    @JsonBackReference
+    @JsonIgnore
     private Set<Emprestimo> emprestimo; // estrutura Set tem o mesmo funcionamento do List, porém evitando a duplicidade de valores
 
     public Cliente(Long id, String nome, String sobrenome, String cpf){

@@ -15,6 +15,7 @@ public class ClienteDTO implements Serializable {
     private String nome;
     private String sobrenome;
     private String cpf;
+    private String foto;
 
     public Cliente toCliente(){
         return new Cliente(
@@ -30,7 +31,8 @@ public class ClienteDTO implements Serializable {
                 cliente.getId(),
                 cliente.getNome(),
                 cliente.getSobrenome(),
-                cliente.getCpf()
+                cliente.getCpf(),
+                cliente.getNome()
         );
     }
 }

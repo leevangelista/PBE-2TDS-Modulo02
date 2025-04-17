@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -20,7 +21,7 @@ public class EmprestimoDTO implements Serializable {
     private LocalDate dataInicial;
     private LocalDate dataFinal;
     private Cliente cliente;
-    private Set<Livro> livros;
+    private List<Livro> livros;
 
     public Emprestimo toEmprestimo(){
         return new Emprestimo(

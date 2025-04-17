@@ -26,7 +26,6 @@ public class Emprestimo implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "id_cliente", referencedColumnName = "id")
-    @JsonManagedReference
     private Cliente cliente;
 
     @ManyToMany
@@ -35,5 +34,5 @@ public class Emprestimo implements Serializable {
             joinColumns = @JoinColumn(name = "emprestimo_id"),
             inverseJoinColumns = @JoinColumn(name = "livro_id")
     )
-    private Set<Livro> livros;
+    private List<Livro> livros;
 }

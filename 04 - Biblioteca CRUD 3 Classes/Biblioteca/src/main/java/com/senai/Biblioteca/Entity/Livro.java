@@ -1,5 +1,6 @@
 package com.senai.Biblioteca.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,6 +25,7 @@ public class Livro implements Serializable {
     private String genero;
 
     @ManyToMany(mappedBy = "livros")
+    @JsonIgnore
     private Set<Emprestimo> emprestimos;
 
     public Livro(Long id, String nome, String autor, int ISBN, String genero){

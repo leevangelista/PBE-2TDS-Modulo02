@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Editar de Usuário</title>
+</head>
+<body>
+    <h2>Editar de Usuário</h2>
+    <form id="usuarioForm">
+        <input type="hidden" id="usuarioId">
+        <label>Nome:</label>
+        <input type="text" name="nome" id="nome" required><br><br>
+        
+        <label>Sobrenome:</label>
+        <input type="sobrenome" name="sobrenome" id="sobrenome" required><br><br>
+
+        <label>CPF:</label>
+        <input type="cpf" name="cpf" id="cpf" required><br><br>
+
+        <label>E-mail:</label>
+        <input type="text" name="email" id="email" required><br><br>
+
+        <label>Username:</label>
+        <input type="text" name="username" id="username" required><br><br>
+
+        <label>Senha:</label>
+        <input type="text" name="senha" id="senha" required><br><br>
+
+        <label>Data Nascimento:</label>
+        <input type="date" name="dataNascimento" id="dataNascimento" required><br><br>
+        
+        <button type="submit">Enviar</button>
+    </form>
+
+    <script>
+        // ## Funções de busca assim que página abre, com base no id da URL(GET)
+        // pega o Id da URL
+        function paramUrl(){
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get("id");
+
+            if (id) {
+                getUsuarioPorId(id);
+            }
+        }
+
+        function preencheCamposDoForm(data){
+            document.getElementById("usuarioId").value = data.id;
+            document.getElementById("nome").value = data.nome;
+            document.getElementById("sobrenome").value = data.sobrenome;
+            document.getElementById("cpf").value = data.cpf;
+            document.getElementById("email").value = data.email;
+            document.getElementById("username").value = data.username;
+            document.getElementById("senha").value = data.senha;
+            document.getElementById("dataNascimento").value = data.dataNascimento;
+        }
+
+        async function getUsuarioPorId(id) {
+
+            try {
+                let response = await fetch(`http://localhost:8080/usuario/${id}`, {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" },
+                });
+    
+                if(!response.ok){
+                    alert("Erro do back-end " + response.status);
+                    return
+                }
+
+                let data = await response.json();
+                preencheCamposDoForm(data)
+
+            } catch (error) {
+                alert("Erro na requisição: " + error.message)
+            }
+        }
+
+        //## Enviar usuario para salvar(POST)
+        function criarObjetoJson(){
+            
+            // ESTRUTURE O OBJETO NO FORMATO JSON
+
+            return formData
+        }
+
+        async function putUsuario(event) {
+            event.preventDefault();
+            let id = document.getElementById("usuarioId").value;
+            
+            let formData = criarObjetoJson()
+
+            try {
+                let response = await fetch(`http://localhost:8080/usuario/${id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(formData)
+                });
+    
+                if(!response.ok){
+                    alert("Erro do back-end " + response.status);
+                    return
+                }
+
+                let data = await response.json();
+                alert("Sucesso: " + JSON.stringify(data));
+
+            } catch (error) {
+                alert("Erro na requisição: " + error.message)
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("usuarioForm").addEventListener("submit", putUsuario);
+            paramUrl();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cadastro de Usuário</title>
+</head>
+<body>
+    <h2>Cadastro de Usuário</h2>
+    <form id="usuarioForm">
+        <label>Nome:</label>
+        <input type="text" name="nome" id="nome" required><br><br>
+        
+        <label>Sobrenome:</label>
+        <input type="sobrenome" name="sobrenome" id="sobrenome" required><br><br>
+
+        <label>CPF:</label>
+        <input type="cpf" name="cpf" id="cpf" required><br><br>
+
+        <label>E-mail:</label>
+        <input type="text" name="email" id="email" required><br><br>
+
+        <label>Username:</label>
+        <input type="text" name="username" id="username" required><br><br>
+
+        <label>Senha:</label>
+        <input type="text" name="senha" id="senha" required><br><br>
+
+        <label>Data Nascimento:</label>
+        <input type="date" name="dataNascimento" id="dataNascimento" required><br><br>
+        
+        <button type="submit">Enviar</button>
+    </form>
+
+    <hr>
+
+    <h2>Lista de Usuários</h2>
+    <form id="usuarioBusca">
+        <label>Nome do Usuario:</label>
+        <input type="text" name="nomeBusca" id="nomeBusca"><br><br>
+        <button type="submit">Carregar Usuarios</button>
+    </form>
+
+    <ul id="listaUsuarios"></ul>
+
+
+    <script>
+        // ## Funções para enviar Usuarios(POST)
+        function criarObjetoParaEnviar(){
+            
+            // ESTRUTURE O OBJETO NO FORMATO JSON
+
+            return formData
+        }
+
+        async function postUsuario(event) {
+            event.preventDefault();
+            
+            let formData = criarObjetoParaEnviar();
+            
+            try {
+                let response = await fetch("http://localhost:8080/usuario", {
+                method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(formData)
+                });
+    
+                if(!response.ok){
+                    alert("Erro do back-end" + response.status)
+                    return
+                }
+    
+                let data = await response.json()
+    
+                alert("Sucesso: " + JSON.stringify(data));
+                getUsuarios();
+            } catch (error) {
+                alert("Erro na requisição: " + error.message)
+                
+            }
+        }
+
+        // ## Funções para buscar Usuarios(GET)
+        function criarListaDeUsuarios(data){
+            let lista = document.getElementById("listaUsuarios");
+            lista.innerHTML = "";
+            data.forEach(usuario => {
+                let item = document.createElement("li");
+                item.textContent = `ID: ${usuario.id} - Nome: ${usuario.nome} - Sobrenome: ${usuario.sobrenome} - CPF: ${usuario.cpf}
+                    - Email: ${usuario.email} - Username: ${usuario.username} - Senha: ${usuario.senha} - Data Nascimento: ${usuario.dataNascimento}`;
+                
+                // botão de editar
+                let btnLink = document.createElement("button");
+                btnLink.textContent = "Editar";
+                btnLink.target = "_blank";
+                btnLink.style.marginLeft = "10px";
+                btnLink.onclick = function() {
+                    window.open(`usuarioEdit.html?id=${usuario.id}`, '_blank');
+                };
+                item.appendChild(btnLink);
+
+                // botão de deletar
+                let btnDeletar = document.createElement("button")
+                btnDeletar.textContent = "Deletar";
+                btnDeletar.style.marginLeft = "10px";
+                btnDeletar.onclick = function(){
+                    deletarUsuario(usuario.id)
+                }
+                item.appendChild(btnDeletar);
+
+                lista.appendChild(item);
+            });
+        }
+        
+        async function getUsuarios(event) {
+            event.preventDefault()
+
+            let nomeBusca = document.getElementById("nomeBusca").value; // acrecentando filtro de nome a busca, caso necessário
+
+            try {
+                let response = await fetch(`http://localhost:8080/usuario?nome=${nomeBusca}`, {
+                method: "GET",
+                    headers: { "Content-Type": "application/json" },
+                });
+    
+                if(!response.ok){
+                    alert("Erro do back-end" + response.status)
+                    return
+                }
+    
+                let data = await response.json()
+                criarListaDeUsuarios(data)
+            } catch (error) {
+                alert("Erro na requisição: " + error.message)
+            }
+        }
+
+        // ## Funções para deletar Usuário(DELETE)
+        async function deletarUsuario(id) {
+            if (confirm("Tem certeza que deseja deletar este usuario?")) {
+                try {
+                    let response = await fetch(`http://localhost:8080/usuario/${id}`, {
+                    method: "DELETE",
+                        headers: { "Content-Type": "application/json" },
+                    });
+        
+                    if(!response.ok){
+                        alert("Erro do back-end" + response.status)
+                        return
+                    }
+                    alert("Usuários deletado com sucesso!");
+                } catch (error) {
+                    alert("Erro na requisição: " + error.message)
+                }
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("usuarioForm").addEventListener("submit", postUsuario);
+            document.getElementById("usuarioBusca").addEventListener("submit", getUsuarios);
+        });
+    </script>
+</body>
+</html>

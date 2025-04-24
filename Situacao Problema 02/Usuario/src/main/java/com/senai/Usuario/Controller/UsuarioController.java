@@ -35,11 +35,11 @@ public class UsuarioController {
     // 2 - buscar por id
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioDTO> getById(@PathVariable Long id){
-        Optional<UsuarioDTO> usuarioDTOOptional = usuarioService.getById(id);
-        if(usuarioDTOOptional.isPresent()){
-            return ResponseEntity.ok(usuarioDTOOptional.get());
+        Optional<UsuarioDTO> usuarioDTOOptional = usuarioService.getById(id); // realiza a busca do usuário com base no id
+        if(usuarioDTOOptional.isPresent()){ // tratamento do retorno
+            return ResponseEntity.ok(usuarioDTOOptional.get()); // existir usuário com esse id retorna StatusHttp 200 e o objeto encontrato
         }else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.notFound().build(); // se não encontrar retorna apenas status 404
         }
     }
 

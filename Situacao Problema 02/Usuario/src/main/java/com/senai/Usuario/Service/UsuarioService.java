@@ -28,15 +28,15 @@ public class UsuarioService {
 
     // 8 - Buscar com base na data de nascimento
     public List<Usuario> getAllByCpf(String cpf){
-        return usuarioRepository.getAllByCpf(cpf);
+        return usuarioRepository.findAllByCpf(cpf);
     }
     // 2 - buscar por id
     public Optional<UsuarioDTO> getById(Long id){
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
-        if(usuarioOptional.isPresent()){
+        if(usuarioOptional.isPresent()){ // verifica se foi encontrado algum usuário
             UsuarioDTO usuarioDTO = new UsuarioDTO();
-            return Optional.of(usuarioDTO.fromUsuario(usuarioOptional.get()));
-        }else {
+            return Optional.of(usuarioDTO.fromUsuario(usuarioOptional.get())); // se encontrou transforma a Entidade em DTO para retornar a tela
+        }else { // se nao encontrou retorna um objeto Optinal vazio
             return Optional.empty();
         }
     }
@@ -68,7 +68,7 @@ public class UsuarioService {
     }
 
     // 6 - Atualizar senha
-    public Optional<UsuarioDTO> updateUsuarioSenha(Long id,  UsuarioDTO usuarioDTO){
+    public Optional<UsuarioDTO> updateUsuarioSenha(Long id, UsuarioDTO usuarioDTO){
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
         if(usuarioOptional.isPresent()){
             Usuario usuario = usuarioOptional.get();

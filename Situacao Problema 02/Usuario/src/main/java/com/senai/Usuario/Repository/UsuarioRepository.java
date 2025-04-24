@@ -6,9 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDate;
 import java.util.List;
 
+// documentação JPA Querys - https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html
+
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     List<Usuario> findAllByNome(String nome);
 
-    List<Usuario> getAllByCpf(String cpf);
+    List<Usuario> findAllByCpf(String cpf);
 }
